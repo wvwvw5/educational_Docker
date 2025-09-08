@@ -1,0 +1,39 @@
+version: '3.8'
+
+services:
+  calc-java:
+    build: ./calc-java
+    container_name: java-calculator
+    stdin_open: true
+    tty: true
+
+  calc-py:
+    build: ./calc-py
+    container_name: python-calculator
+    stdin_open: true
+    tty: true
+
+  calc-dart:
+    build: ./dart-calc
+    container_name: dart-calculator
+    stdin_open: true
+    tty: true
+
+  game-java:
+    build: ./game-java
+    container_name: java-game
+    stdin_open: true
+    tty: true
+
+  rps-game:
+    build: ./rpsgame-py
+    container_name: python-rps-game
+    stdin_open: true
+    tty: true
+
+  website:
+    build: ./site
+    container_name: nginx-website
+    ports:
+      - "8080:80"
+    restart: unless-stopped

@@ -1,0 +1,27 @@
+# Системные файлы
+.DS_Store
+Thumbs.db
+
+# Временные файлы
+*.tmp
+*.log
+*.swp
+*.swo
+
+# IDE файлы
+.vscode/
+.idea/
+*.iml
+
+# Python кэш
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+
+# Java классы
+*.class
+
+# Docker volumes
+docker-compose.override.yml
