@@ -1,0 +1,59 @@
+version: '3.8'
+
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: time-mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: password
+      MYSQL_DATABASE: time_db
+    ports:
+      - "3307:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    networks:
+      - time-network
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      timeout: 20s
+      retries: 10
+
+  api:
+    build: ./api
+    container_name: time-api
+    ports:
+      - "5001:5000"
+    depends_on:
+      mysql:
+        condition: service_healthy
+    environment:
+      - NODE_ENV=production
+    networks:
+      - time-network
+
+  frontend:
+    build: ./frontend
+    container_name: time-frontend
+    ports:
+      - "80:80"
+    depends_on:
+      - api
+    networks:
+      - time-network
+
+  adminer:
+    image: adminer:latest
+    container_name: time-adminer
+    ports:
+      - "8080:8080"
+    depends_on:
+      - mysql
+    networks:
+      - time-network
+
+volumes:
+  mysql_data:
+
+networks:
+  time-network:
+    driver: bridge
