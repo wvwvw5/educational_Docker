@@ -1,0 +1,162 @@
+{
+  "id": null,
+  "uid": "practice4",
+  "title": "Практика 4: Мониторинг из разных источников",
+  "timezone": "",
+  "schemaVersion": 39,
+  "version": 1,
+  "refresh": "5m",
+  "time": {
+    "from": "now-7d",
+    "to": "now"
+  },
+  "panels": [
+    {
+      "id": 1,
+      "title": "Температура и влажность (PostgreSQL)",
+      "type": "timeseries",
+      "datasource": {
+        "type": "postgres",
+        "uid": "docker-postgres"
+      },
+      "targets": [
+        {
+          "format": "time_series",
+          "group": [],
+          "hide": false,
+          "metricColumn": "none",
+          "rawQuery": true,
+          "refId": "A",
+          "resultFormat": "time_series",
+          "table": "sensor_readings",
+          "timeColumn": "ts",
+          "timeColumnType": "timestamp",
+          "where": [],
+          "rawSql": "SELECT ts AS \"time\", temperature AS \"Температура, °C\" FROM sensor_readings ORDER BY ts"
+        },
+        {
+          "format": "time_series",
+          "group": [],
+          "hide": false,
+          "metricColumn": "none",
+          "rawQuery": true,
+          "refId": "B",
+          "resultFormat": "time_series",
+          "rawSql": "SELECT ts AS \"time\", humidity AS \"Влажность, %\" FROM sensor_readings ORDER BY ts"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "legend": {
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "multi"
+        }
+      }
+    },
+    {
+      "id": 2,
+      "title": "Потребление энергии (MySQL)",
+      "type": "timeseries",
+      "datasource": {
+        "type": "mysql",
+        "uid": "docker-mysql"
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "rawQuery": true,
+          "format": "time_series",
+          "metricColumn": "none",
+          "rawSql": "SELECT recorded_at AS \"time\", kilowatt_hours AS \"Потребление, кВт·ч\" FROM energy_usage ORDER BY recorded_at"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "legend": {
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "single"
+        }
+      }
+    },
+    {
+      "id": 3,
+      "title": "Нагрузка CPU (SQLite на хосте)",
+      "type": "timeseries",
+      "datasource": {
+        "type": "frser-sqlite-datasource",
+        "uid": "host-sqlite"
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "rawQuery": true,
+          "rawSql": "SELECT datetime(captured_at) AS \"time\", cpu_load AS \"CPU, %\" FROM local_metrics ORDER BY captured_at"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "legend": {
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "single"
+        }
+      }
+    }
+  ]
+}

@@ -1,0 +1,21 @@
+services:
+  grafana:
+    image: grafana/grafana:10.2.3
+    container_name: grafana-practice
+    restart: unless-stopped
+    environment:
+      GF_SECURITY_ADMIN_USER: admin
+      GF_SECURITY_ADMIN_PASSWORD: admin123
+    volumes:
+      - ./data:/var/lib/grafana
+      - ./plugins:/var/lib/grafana/plugins
+      - ../data:/var/lib/grafana/host-data
+      - ./provisioning:/etc/grafana/provisioning
+    ports:
+      - "3000:3000"
+    networks:
+      - grafana_net
+
+networks:
+  grafana_net:
+    external: true

@@ -1,0 +1,40 @@
+version: "3.9"
+
+services:
+  postgres-db:
+    image: postgres:15-alpine
+    container_name: postgres-practice
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: metrics
+      POSTGRES_USER: grafana
+      POSTGRES_PASSWORD: grafana
+    volumes:
+      - ./postgres/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - grafana_net
+
+  mysql-db:
+    image: mysql:8.2
+    container_name: mysql-practice
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: analytics
+      MYSQL_USER: grafana
+      MYSQL_PASSWORD: grafana
+    command: ["--default-authentication-plugin=mysql_native_password", "--character-set-server=utf8mb4", "--collation-server=utf8mb4_unicode_ci"]
+    volumes:
+      - ./mysql/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+      - mysql_data:/var/lib/mysql
+    networks:
+      - grafana_net
+
+volumes:
+  postgres_data:
+  mysql_data:
+
+networks:
+  grafana_net:
+    external: true
