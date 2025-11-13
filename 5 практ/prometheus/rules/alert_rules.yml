@@ -1,0 +1,32 @@
+groups:
+  - name: demo-app-alerts
+    rules:
+      - alert: HighRequestLatency
+        expr: histogram_quantile(0.95, rate(app_http_request_duration_seconds_bucket[2m])) > 1
+        for: 30s
+        labels:
+          severity: critical
+          channel: performance
+        annotations:
+          summary: "Высокая задержка ответа приложения"
+          description: "95-й перцентиль времени ответа превышает 1 секунду." 
+
+      - alert: ActiveUsersSurge
+        expr: app_active_users > 250
+        for: 45s
+        labels:
+          severity: warning
+          channel: product
+        annotations:
+          summary: "Резкий рост активных пользователей"
+          description: "Количество активных пользователей перевалило за 250."
+
+      - alert: BusinessErrorsSpike
+        expr: increase(app_business_errors_total[5m]) > 5
+        for: 30s
+        labels:
+          severity: critical
+          channel: incidents
+        annotations:
+          summary: "Рост бизнес-ошибок"
+          description: "За последние 5 минут зафиксировано более 5 бизнес-ошибок."

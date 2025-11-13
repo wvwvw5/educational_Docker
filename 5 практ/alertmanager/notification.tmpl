@@ -1,0 +1,6 @@
+{{ define "telegram.default.message" }}
+*{{ .Status | toUpper }}* alert: {{ .CommonLabels.alertname }}
+Severity: {{ .CommonLabels.severity }}
+Summary: {{ .CommonAnnotations.summary }}
+Description: {{ .CommonAnnotations.description }}
+{{ end }}

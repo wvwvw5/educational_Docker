@@ -1,0 +1,38 @@
+global:
+  resolve_timeout: 1m
+  smtp_smarthost: 'mailpit:1025'
+  smtp_from: 'alerts@demo-monitoring.local'
+  smtp_require_tls: false
+
+templates:
+  - 'notification.tmpl'
+
+route:
+  receiver: 'telegram'
+  group_by: ['alertname']
+  group_wait: 10s
+  group_interval: 30s
+  repeat_interval: 2m
+  routes:
+    - receiver: 'telegram'
+    - receiver: 'email'
+      continue: true
+
+receivers:
+  - name: 'telegram'
+    webhook_configs:
+      - url: 'http://telegram-webhook:5000/webhook'
+        send_resolved: true
+
+  - name: 'email'
+    email_configs:
+      - to: 'operations@demo-monitoring.local'
+        send_resolved: true
+        headers:
+          subject: '[Monitoring] {{ .Status | toUpper }}: {{ .CommonLabels.alertname }}'
+        html: |
+          <h3>Status: {{ .Status }}</h3>
+          <p><strong>Alert:</strong> {{ .CommonLabels.alertname }}</p>
+          <p><strong>Severity:</strong> {{ .CommonLabels.severity }}</p>
+          <p><strong>Description:</strong> {{ .CommonAnnotations.description }}</p>
+          <p><em>Generated at {{ .StartsAt }}</em></p>

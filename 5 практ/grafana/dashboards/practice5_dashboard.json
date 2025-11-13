@@ -1,0 +1,181 @@
+{
+  "id": null,
+  "uid": "practice5",
+  "title": "Практика 5: Мониторинг приложения",
+  "tags": ["practice5", "prometheus", "demo-app"],
+  "timezone": "",
+  "schemaVersion": 39,
+  "version": 1,
+  "refresh": "10s",
+  "time": {
+    "from": "now-30m",
+    "to": "now"
+  },
+  "panels": [
+    {
+      "id": 1,
+      "title": "CPU (process_cpu_seconds_total)",
+      "type": "timeseries",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus-ds"
+      },
+      "targets": [
+        {
+          "expr": "rate(process_cpu_seconds_total{job='demo_app'}[1m])",
+          "legendFormat": "CPU ({{instance}})",
+          "refId": "A"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "percentunit",
+          "color": {"mode": "palette-classic"}
+        },
+        "overrides": []
+      },
+      "gridPos": {"h": 8, "w": 8, "x": 0, "y": 0}
+    },
+    {
+      "id": 2,
+      "title": "Память процесса",
+      "type": "timeseries",
+      "datasource": {"type": "prometheus", "uid": "prometheus-ds"},
+      "targets": [
+        {
+          "expr": "process_resident_memory_bytes{job='demo_app'}",
+          "legendFormat": "RSS {{instance}}",
+          "refId": "A"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "bytes",
+          "color": {"mode": "palette-classic"}
+        },
+        "overrides": []
+      },
+      "gridPos": {"h": 8, "w": 8, "x": 8, "y": 0}
+    },
+    {
+      "id": 3,
+      "title": "Сборка мусора Python",
+      "type": "timeseries",
+      "datasource": {"type": "prometheus", "uid": "prometheus-ds"},
+      "targets": [
+        {
+          "expr": "rate(python_gc_objects_collected_total{job='demo_app'}[5m])",
+          "legendFormat": "GC {{generation}}",
+          "refId": "A"
+        }
+      ],
+      "gridPos": {"h": 8, "w": 8, "x": 16, "y": 0}
+    },
+    {
+      "id": 4,
+      "title": "Активные пользователи",
+      "type": "timeseries",
+      "datasource": {"type": "prometheus", "uid": "prometheus-ds"},
+      "targets": [
+        {
+          "expr": "app_active_users",
+          "legendFormat": "Active users",
+          "refId": "A"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "none",
+          "color": {"mode": "continuous-BlPu"}
+        },
+        "overrides": []
+      },
+      "gridPos": {"h": 8, "w": 8, "x": 0, "y": 8}
+    },
+    {
+      "id": 5,
+      "title": "Размер БД",
+      "type": "timeseries",
+      "datasource": {"type": "prometheus", "uid": "prometheus-ds"},
+      "targets": [
+        {
+          "expr": "app_database_size_megabytes",
+          "legendFormat": "DB size",
+          "refId": "A"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "decbytes",
+          "color": {"mode": "continuous-RdYlGn"}
+        },
+        "overrides": []
+      },
+      "gridPos": {"h": 8, "w": 8, "x": 8, "y": 8}
+    },
+    {
+      "id": 6,
+      "title": "Коэффициент попаданий кеша",
+      "type": "timeseries",
+      "datasource": {"type": "prometheus", "uid": "prometheus-ds"},
+      "targets": [
+        {
+          "expr": "app_cache_hit_ratio",
+          "legendFormat": "Cache hit ratio",
+          "refId": "A"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "percentunit",
+          "color": {"mode": "continuous-BuGn"},
+          "max": 1
+        },
+        "overrides": []
+      },
+      "gridPos": {"h": 8, "w": 8, "x": 16, "y": 8}
+    },
+    {
+      "id": 7,
+      "title": "95-й перцентиль задержки",
+      "type": "timeseries",
+      "datasource": {"type": "prometheus", "uid": "prometheus-ds"},
+      "targets": [
+        {
+          "expr": "histogram_quantile(0.95, sum(rate(app_http_request_duration_seconds_bucket[2m])) by (le))",
+          "legendFormat": "p95 latency",
+          "refId": "A"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "s",
+          "color": {"mode": "continuous-reds"}
+        },
+        "overrides": []
+      },
+      "gridPos": {"h": 8, "w": 12, "x": 0, "y": 16}
+    },
+    {
+      "id": 8,
+      "title": "Ошибки бизнеса (5м)",
+      "type": "timeseries",
+      "datasource": {"type": "prometheus", "uid": "prometheus-ds"},
+      "targets": [
+        {
+          "expr": "increase(app_business_errors_total[5m])",
+          "legendFormat": "{{error_type}}",
+          "refId": "A"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short",
+          "color": {"mode": "palette-classic"}
+        },
+        "overrides": []
+      },
+      "gridPos": {"h": 8, "w": 12, "x": 12, "y": 16}
+    }
+  ]
+}
